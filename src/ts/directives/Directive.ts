@@ -1,13 +1,7 @@
-/// <reference path="../lib/jquery.d.ts"/>
-/// <reference path="../lib/angular.d.ts"/>
+/// <reference path="../osml.ts"/>
 
-module OSML.Directives{
-    export class Directive{
-        public factory():ng.IDirective{
-            return () => {
-                return new Directive();
-            }
-        }
-    }
+'use strict';
+
+module app.directives{
+
 }
-

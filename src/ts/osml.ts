@@ -1,14 +1,14 @@
+/// <reference path="lib/jquery.d.ts"/>
+/// <reference path="lib/angular.d.ts"/>
+
 /// <reference path="services/DataSources.ts"/>
-/// <reference path="directives/osInput.ts"/>
 
-module OSML{
-    'use strict';
+'use strict';
 
-    var osml = angular.module('OSML', [])
-        .service('DataSourceService', Services.DataSources)
-        .directive('osInput', Directives.osInput.factory());
+module osml {
+    var app = angular.module('osml', []);
 
+    app.factory('DataSources', services.DataSources);
 
 
 }
-

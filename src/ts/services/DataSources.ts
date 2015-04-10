@@ -1,4 +1,5 @@
-module OSML.Services{
+
+module osml.services{
     export class DataSources{
         private datasources:any;
 

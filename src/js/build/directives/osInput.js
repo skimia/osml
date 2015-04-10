@@ -3,17 +3,14 @@ var OSML;
     var Directives;
     (function (Directives) {
         var osInput = (function () {
-            function osInput() {
+            function osInput($datasources) {
+                console.log('osInput');
             }
             osInput.prototype.link = function (scope, element, attrs) {
                 console.log('test');
-                $(element).html('Test');
+                $(element).addClass('Test');
             };
-            osInput.factory = function () {
-                return function () {
-                    return new osInput();
-                };
-            };
+            osInput.$inject = [];
             return osInput;
         })();
         Directives.osInput = osInput;

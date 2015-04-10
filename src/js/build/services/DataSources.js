@@ -1,7 +1,7 @@
-var OSML;
-(function (OSML) {
-    var Services;
-    (function (Services) {
+var osml;
+(function (osml) {
+    var services;
+    (function (services) {
         var DataSources = (function () {
             function DataSources() {
                 this.datasources = {};
@@ -14,6 +14,6 @@ var OSML;
             };
             return DataSources;
         })();
-        Services.DataSources = DataSources;
-    })(Services = OSML.Services || (OSML.Services = {}));
-})(OSML || (OSML = {}));
+        services.DataSources = DataSources;
+    })(services = osml.services || (osml.services = {}));
+})(osml || (osml = {}));
