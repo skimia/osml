@@ -18,6 +18,5 @@ module osml.services{
         public get(name:string):any {
 
         }
-
     }
 }
