@@ -6,22 +6,30 @@ var $plugins = require('gulp-load-plugins')();
 // Config //
 var path = {
     files: {
-        css: 'src/css/*.css',
+        css: 'app/css/*.css',
         scss: [
-            'src/scss/*.scss',
-            'src/scss/**/*.scss'
+            'app/css/scss/*.scss',
+            'app/css/scss/**/*.scss'
         ],
+        js: 'app/js/build/**/*.js',
+        jsMain: 'app/js/build/osml.js',
         ts: [
-            'src/ts/*.ts',
-            'src/ts/**/*.ts'
+            'app/js/ts/**/*.ts',
+            'app/js/ts/*.ts'
         ]
     },
     dirs: {
-        css: 'src/css',
-        js: 'src/js',
-        jsBuild: 'src/js/build'
+        css: 'app/css',
+        js: 'app/js',
+        jsBuild: 'app/js/build'
     }
 };
+
+var jsOrder = [
+    'app/js/build/directives/*.js',
+    'app/js/build/services/*.js',
+    'app/js/build/osml.js'
+]
 
 var tsProject = $plugins.typescript.createProject({
     declarationFiles: true,
@@ -84,6 +92,7 @@ $gulp.task('typescript', function(){
     return $gulp.src(path.files.ts)
         .pipe($plugins.typescript(tsProject))
         .pipe($gulp.dest(path.dirs.jsBuild))
+        .pipe($plugins.requireOrder())
         .pipe($plugins.concat('app.min.js'))
         .pipe($gulp.dest(path.dirs.js));
 });
