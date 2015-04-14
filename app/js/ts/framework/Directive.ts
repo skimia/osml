@@ -1,12 +1,16 @@
+/// <reference path="../osml.ts"/>
+
 
 module osml.framework{
     'use strict';
 
-    export class Directive{
+    export class Directive extends FunctionClass{
 
         public $inject:string[] = [];
 
-        constructor() {}
+        constructor() {
+            super();
+        }
 
         public link($scope:ng.IScope, element:JQuery, attrs:any):void {}
 

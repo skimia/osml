@@ -1,11 +1,15 @@
+// require '../osml.js'
+// require '../framework/DataSourceDirective.js'
+
+/// <reference path="../osml.ts"/>
 
 module osml.directives{
     'use strict';
 
-    export class OsContainer extends framework.Directive{
+    export class OsContainer extends framework.DataSourceDirective{
 
-        constructor() {
-            super()
+        constructor(datasource:services.DataSources) {
+            super(datasource);
         }
 
         public link($scope:ng.IScope, element:JQuery, attrs:any):void {
@@ -13,4 +17,6 @@ module osml.directives{
         }
 
     }
+
+    registerDirective('OsContainer');
 }
