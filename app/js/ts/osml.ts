@@ -1,20 +1,17 @@
 /// <reference path="def/_all.d.ts"/>
+/// <reference path="services/DataSources.ts"/>
+/// <reference path="directives/osContainer.ts"/>
+/// <reference path="directives/osInput.ts"/>
+/// <reference path="directives/osSelect.ts"/>
 
 module osml {
     'use strict';
 
     var app = angular.module('osml', []);
 
-    //app.factory('DataSources', services.DataSources);
-
-    export var registerDirective = (directive:string) => {
-        var name = directive[0].toLowerCase() + directive.slice(1);
-        app.directive(name, directives[directive].factory());
-    }
-
-    export var registerService = (service:string) => {
-        var name = service[0].toLowerCase() + service.slice(1);
-        app.factory(name, services[service]);
-    }
+    app.factory('DataSources', osml.services.DataSources);
+    app.directive('osContainer', [osml.directives.osContainer]);
+    app.directive('osInput', [osml.directives.osInput]);
+    app.directive('osSelect', [osml.directives.osSelect]);
 
 }

@@ -1,4 +1,3 @@
-// require '../osml.js'
 
 module osml.services{
     export class DataSources{
@@ -22,6 +21,4 @@ module osml.services{
             return this.datasources[name];
         }
     }
-
-    registerService('DataSource');
 }

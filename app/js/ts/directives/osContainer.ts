@@ -1,22 +1,33 @@
-// require '../osml.js'
-// require '../framework/DataSourceDirective.js'
-
-/// <reference path="../osml.ts"/>
 
 module osml.directives{
     'use strict';
 
-    export class OsContainer extends framework.DataSourceDirective{
+    export function osContainer():ng.IDirective {
+        return {
+            scope: {
+                direction: '@'
+            },
+            link: ($scope:ng.IScope, element:JQuery, attributes:ng.IAttributes) => {
+                element.addClass('os-container');
 
-        constructor(datasource:services.DataSources) {
-            super(datasource);
+                switch ($scope.direction){
+                    case 'row':
+                        element.addClass('row');
+                        break;
+                    case 'row-reverse':
+                        element.addClass('row-reverse');
+                        break;
+                    case 'column':
+                        element.addClass('column');
+                        break;
+                    case 'column-reverse':
+                        element.addClass('column-reverse');
+                        break;
+                    default:
+                        console.error('os-container: invalid direction');
+                        break;
+                }
+            }
         }
-
-        public link($scope:ng.IScope, element:JQuery, attrs:any):void {
-            element.addClass('os-container');
-        }
-
     }
-
-    registerDirective('OsContainer');
 }

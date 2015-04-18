@@ -1,0 +1,8 @@
+.os-input{
+  @extend .input-field;
+
+  input{
+      @extend .validate;
+  }
+}
+
