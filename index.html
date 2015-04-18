@@ -3,16 +3,29 @@
     <head lang="fr">
         <meta charset="UTF-8">
         <title></title>
-        <link rel="stylesheet" href="app/css/osui.css"/>
+        <link rel="stylesheet" href="app/css/osml.css"/>
     </head>
     <body>
-        <p>Hello</p>
 
-        <os-container></os-container>
-
+        <os-container direction="row">
+            <os-input>
+                <label for="form[1]">Input 1</label>
+                <input type="text" id="form[1]" ng-model="form[1]">
+            </os-input>
+            <os-select>
+                <label>Select</label>
+                <select ng-model="test">
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                </select>
+            </os-select>
+        </os-container>
 
         <script src="app/js/lib/jquery.min.js"></script>
+        <script src="app/js/lib/materialize.min.js"></script>
         <script src="app/js/lib/angular.min.js"></script>
-        <script src="app/js/app.min.js"></script>
+        <script src="app/js/osml.js"></script>
     </body>
 </html>

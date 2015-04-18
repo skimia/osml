@@ -12,11 +12,12 @@ var path = {
             'app/css/scss/**/*.scss'
         ],
         js: 'app/js/build/**/*.js',
-        jsMain: 'app/js/build/osml.js',
+        jsMain: 'app/js/osml.js',
         ts: [
             'app/js/ts/**/*.ts',
             'app/js/ts/*.ts'
-        ]
+        ],
+        tsMain: 'app/js/ts/osml.ts'
     },
     dirs: {
         css: 'app/css',
@@ -51,7 +52,7 @@ $gulp.task('default', function(){
             console.log('Change detected on "' + event.path +'"');
         });
 
-    $gulp.watch(['index.html', path.files.css, path.dirs.js + '/app.min.js'])
+    $gulp.watch(['index.html', path.dirs.css + '/osml.css', path.dirs.js + '/osml.js'])
         .on('change', function(event){
             $plugins.livereload.changed(event.path);
         })
@@ -89,10 +90,14 @@ $gulp.task('sass', function(){
 });
 
 $gulp.task('typescript', function(){
-    return $gulp.src(path.files.ts)
-        .pipe($plugins.typescript(tsProject))
-        .pipe($gulp.dest(path.dirs.jsBuild))
-        .pipe($plugins.requireOrder())
-        .pipe($plugins.concat('app.min.js'))
+    return $gulp.src(path.files.tsMain, {read: false})
+        .pipe($plugins.typescriptCompiler({
+            resolve: true,
+            logErrors: true,
+            sourcemap: false
+        }))
+        //.pipe($gulp.dest(path.dirs.jsBuild))
+        //.pipe($plugins.requireOrder())
+        .pipe($plugins.concat('osml.js'))
         .pipe($gulp.dest(path.dirs.js));
 });
