@@ -5,22 +5,11 @@
         <title></title>
         <link rel="stylesheet" href="app/css/osml.css"/>
     </head>
-    <body>
+    <body ng-controller="MainController">
 
-        <os-container direction="row">
-            <os-input>
-                <label for="form[1]">Input 1</label>
-                <input type="text" id="form[1]" ng-model="form[1]">
-            </os-input>
-            <os-select>
-                <label>Select</label>
-                <select ng-model="test">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="1">Option 1</option>
-                    <option value="2">Option 2</option>
-                    <option value="3">Option 3</option>
-                </select>
-            </os-select>
+        <os-container direction="column">
+            <os-input placeholder=""></os-input>
+            <os-select options="[{text:'test', value:'12'}, {text:'test', value:'12'}]"></os-select>
         </os-container>
 
         <script src="app/js/vendors/jquery.min.js"></script>

@@ -2,13 +2,19 @@
 module osml.directives{
     'use strict';
 
-    export function osSelect($timer):ng.IDirective {
+    osml.app.directive('osSelect', ($timeout) => {
         return {
-            scope: true,
+            templateUrl: 'app/components/osSelect.html',
+            scope: {
+                options: '='
+            },
             link: ($scope:ng.IScope, element:JQuery, attributes:ng.IAttributes) => {
                 element.addClass('os-select');
-                $(element).children('select').material_select();
+
+                $timeout(() => {
+                    $(element).children('select').material_select();
+                }, 0);
             }
         }
-    }
+    });
 }

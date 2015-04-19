@@ -1,5 +1,125 @@
 var osml;
 (function (osml) {
+    'use strict';
+    osml.app = angular.module('osml', []);
+    function registerDirective(className, services) {
+        if (services === void 0) { services = []; }
+        var directive = className[0].toLowerCase() + className.slice(1);
+        services.push(function () { return new osml.directives[className](); });
+        osml.app.directive(directive, services);
+    }
+    osml.registerDirective = registerDirective;
+    function registerController(className, services) {
+        if (services === void 0) { services = []; }
+        services.push(osml.controllers[className]);
+        osml.app.controller(className, services);
+    }
+    osml.registerController = registerController;
+    function registerService(className, services) {
+        if (services === void 0) { services = []; }
+        var service = className[0].toLowerCase() + className.slice(1);
+        services.push(function () { return new services[className](); });
+        osml.app.factory(service, services);
+    }
+    osml.registerService = registerService;
+})(osml || (osml = {}));
+var osml;
+(function (osml) {
+    var controllers;
+    (function (controllers) {
+        var MainController = (function () {
+            function MainController($scope) {
+                this.$scope = $scope;
+                $scope.message = 'Hello';
+            }
+            return MainController;
+        })();
+        controllers.MainController = MainController;
+    })(controllers = osml.controllers || (osml.controllers = {}));
+})(osml || (osml = {}));
+osml.registerController('MainController', ['$scope']);
+var osml;
+(function (osml) {
+    var directives;
+    (function (directives) {
+        'use strict';
+        var osContainer = (function () {
+            function osContainer() {
+                this.scope = {
+                    direction: '@'
+                };
+            }
+            osContainer.prototype.link = function ($scope, element, attributes) {
+                element.addClass('os-container');
+                switch ($scope.direction) {
+                    case 'row':
+                        element.addClass('row');
+                        break;
+                    case 'row-reverse':
+                        element.addClass('row-reverse');
+                        break;
+                    case 'column':
+                        element.addClass('column');
+                        break;
+                    case 'column-reverse':
+                        element.addClass('column-reverse');
+                        break;
+                    default:
+                        console.error('os-container: invalid direction');
+                        break;
+                }
+            };
+            return osContainer;
+        })();
+        directives.osContainer = osContainer;
+    })(directives = osml.directives || (osml.directives = {}));
+})(osml || (osml = {}));
+osml.registerDirective('osContainer', []);
+var osml;
+(function (osml) {
+    var directives;
+    (function (directives) {
+        'use strict';
+        var osInput = (function () {
+            function osInput() {
+                this.templateUrl = 'app/components/osInput.html';
+                this.scope = {
+                    placeholder: '@'
+                };
+            }
+            osInput.prototype.link = function ($scope, element, attributes) {
+                element.addClass('os-input');
+            };
+            return osInput;
+        })();
+        directives.osInput = osInput;
+    })(directives = osml.directives || (osml.directives = {}));
+})(osml || (osml = {}));
+osml.registerDirective('osInput', []);
+var osml;
+(function (osml) {
+    var directives;
+    (function (directives) {
+        'use strict';
+        osml.app.directive('osSelect', function ($timeout) {
+            return {
+                templateUrl: 'app/components/osSelect.html',
+                scope: {
+                    options: '='
+                },
+                link: function ($scope, element, attributes) {
+                    element.addClass('os-select');
+                    $timeout(function () {
+                        $(element).children('select').material_select();
+                    }, 0);
+                }
+            };
+        });
+    })(directives = osml.directives || (osml.directives = {}));
+})(osml || (osml = {}));
+var osml;
+(function (osml) {
+    var services;
     (function (services) {
         var DataSources = (function () {
             function DataSources() {
@@ -9,107 +129,13 @@ var osml;
             }
             DataSources.prototype.add = function (name, datasource) {
             };
-
             DataSources.prototype.delete = function (name) {
             };
-
             DataSources.prototype.get = function (name) {
                 return this.datasources[name];
             };
             return DataSources;
         })();
         services.DataSources = DataSources;
-    })(osml.services || (osml.services = {}));
-    var services = osml.services;
-})(osml || (osml = {}));
-
-var osml;
-(function (osml) {
-    (function (directives) {
-        'use strict';
-
-        function osContainer() {
-            return {
-                scope: {
-                    direction: '@'
-                },
-                link: function ($scope, element, attributes) {
-                    element.addClass('os-container');
-
-                    switch ($scope.direction) {
-                        case 'row':
-                            element.addClass('row');
-                            break;
-                        case 'row-reverse':
-                            element.addClass('row-reverse');
-                            break;
-                        case 'column':
-                            element.addClass('column');
-                            break;
-                        case 'column-reverse':
-                            element.addClass('column-reverse');
-                            break;
-                        default:
-                            console.error('os-container: invalid direction');
-                            break;
-                    }
-                }
-            };
-        }
-        directives.osContainer = osContainer;
-    })(osml.directives || (osml.directives = {}));
-    var directives = osml.directives;
-})(osml || (osml = {}));
-
-var osml;
-(function (osml) {
-    (function (directives) {
-        'use strict';
-
-        function osInput() {
-            return {
-                link: function ($scope, element, attributes) {
-                    element.addClass('os-input');
-                }
-            };
-        }
-        directives.osInput = osInput;
-    })(osml.directives || (osml.directives = {}));
-    var directives = osml.directives;
-})(osml || (osml = {}));
-
-var osml;
-(function (osml) {
-    (function (directives) {
-        'use strict';
-
-        function osSelect($timer) {
-            return {
-                scope: true,
-                link: function ($scope, element, attributes) {
-                    element.addClass('os-select');
-                    $(element).children('select').material_select();
-                }
-            };
-        }
-        directives.osSelect = osSelect;
-    })(osml.directives || (osml.directives = {}));
-    var directives = osml.directives;
-})(osml || (osml = {}));
-
-/// <reference path="def/_all.d.ts"/>
-/// <reference path="services/DataSources.ts"/>
-/// <reference path="directives/osContainer.ts"/>
-/// <reference path="directives/osInput.ts"/>
-/// <reference path="directives/osSelect.ts"/>
-var osml;
-(function (osml) {
-    'use strict';
-
-    var app = angular.module('osml', []);
-
-    app.factory('DataSources', osml.services.DataSources);
-    app.directive('osContainer', [osml.directives.osContainer]);
-    app.directive('osInput', [osml.directives.osInput]);
-    app.directive('osSelect', [osml.directives.osSelect]);
+    })(services = osml.services || (osml.services = {}));
 })(osml || (osml = {}));

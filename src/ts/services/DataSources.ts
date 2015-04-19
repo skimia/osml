@@ -1,7 +1,7 @@
 
 module osml.services{
     export class DataSources{
-        private datasources:any;
+        public datasources:any;
 
         constructor(){
             this.datasources = {
