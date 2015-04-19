@@ -1,103 +1,92 @@
-// Gulp & Modules //
-var $gulp = require('gulp');
-var $plugins = require('gulp-load-plugins')();
+/***************************
+ *  Module Requirements
+ **************************/
 
+var gulp = require('gulp');
+var live = require('gulp-livereload');
+var tsc = require('gulp-typescript');
+var prefixer = require('gulp-autoprefixer');
+var sass = require('gulp-sass');
 
-// Config //
+/***************************
+ *  Config
+ **************************/
+
 var path = {
     files: {
-        css: 'app/css/*.css',
+        html: [
+            'index.html',
+            'app/components/*.html'
+        ],
+        css: [
+            'app/css/*.css',
+            'app/css/**/*.css'
+        ],
+        js: [
+            'app/js/*.js',
+            'app/js/**/*.js'
+        ],
         scss: [
-            'app/css/scss/*.scss',
-            'app/css/scss/**/*.scss'
+            'src/scss/*.scss',
+            'src/scss/**/*.scss'
         ],
-        js: 'app/js/build/**/*.js',
-        jsMain: 'app/js/osml.js',
         ts: [
-            'app/js/ts/**/*.ts',
-            'app/js/ts/*.ts'
-        ],
-        tsMain: 'app/js/ts/osml.ts'
+            'src/ts/*.ts',
+            'src/ts/**/*.ts'
+        ]
     },
     dirs: {
-        css: 'app/css',
-        js: 'app/js',
-        jsBuild: 'app/js/build'
+        css:'app/css',
+        js: 'app/js'
     }
-};
+}
 
-var jsOrder = [
-    'app/js/build/directives/*.js',
-    'app/js/build/services/*.js',
-    'app/js/build/osml.js'
-]
+/***************************
+ *  Gulp Tasks
+ **************************/
 
-var tsProject = $plugins.typescript.createProject({
-    declarationFiles: true,
-    noExternalResolve: true
-});
+/**** Watch ****/
+gulp.task('default', function() {
+    live.listen();
 
-
-// Watch //
-$gulp.task('default', function(){
-    $plugins.livereload.listen();
-
-    $gulp.watch(path.files.scss, ['sass'])
+    // app files watch for livereload
+    gulp.watch([path.files.html, path.files.css, path.dirs.js])
         .on('change', function(event){
-            console.log('Change detected on "' + event.path +'"');
-        });
-
-    $gulp.watch(path.files.ts, ['typescript'])
-        .on('change', function(event){
-            console.log('Change detected on "' + event.path +'"');
-        });
-
-    $gulp.watch(['index.html', path.dirs.css + '/osml.css', path.dirs.js + '/osml.js'])
-        .on('change', function(event){
-            $plugins.livereload.changed(event.path);
+            live.changed(event.path);
         })
+
+    // ts src files watch for compile to js
+    gulp.watch(path.files.ts, ['ts'])
+        .on('change', function (event) {
+            console.log('Change detected on "' + event.path + '"');
+        });
+
+    // scss src files watch for compile to css
+    gulp.watch(path.files.scss, ['sass'])
+        .on('change', function(event){
+            console.log('Change detected on "' + event.path +'"');
+        });
 });
 
-
-// Tasks //
-$gulp.task('compile', function(){
-    $gulp.src('src/js/*.js')
-        .pipe($plugins.uglify())
-        .pipe($plugins.rename(function(path){
-            path.basename += '.min'
-        }))
-        .pipe($gulp.dest(path.dirs.js));
-
-    $gulp.src(path.files.css)
-        .pipe($plugins.minifyCss())
-        .pipe($plugins.rename(function(path){
-            path.basename += '.min'
-        }))
-        .pipe($gulp.dest(path.dirs.css));
-})
-
-$gulp.task('sass', function(){
-    return $gulp.src(path.files.scss)
-        //compile
-        .pipe($plugins.sass({
+/**** SASS ****/
+gulp.task('sass', function(){
+    return gulp.src(path.files.scss)
+        .pipe(sass({
             onError: console.error.bind(console, 'SASS Error:')
         }))
-        //prefix
-        .pipe($plugins.autoprefixer({
+        .pipe(prefixer({
             browsers: ['last 2 versions']
         }))
-        .pipe($gulp.dest(path.dirs.css));
+        .pipe(gulp.dest(path.dirs.css));
 });
 
-$gulp.task('typescript', function(){
-    return $gulp.src(path.files.tsMain, {read: false})
-        .pipe($plugins.typescriptCompiler({
-            resolve: true,
-            logErrors: true,
-            sourcemap: false
+/**** Typescript ****/
+gulp.task('ts', function(){
+    return gulp.src(path.files.ts)
+        .pipe(tsc({
+            out: 'osml.js',
+            removeComments: true
         }))
-        //.pipe($gulp.dest(path.dirs.jsBuild))
-        //.pipe($plugins.requireOrder())
-        .pipe($plugins.concat('osml.js'))
-        .pipe($gulp.dest(path.dirs.js));
+        .js.pipe(gulp.dest(path.dirs.js));
 });
+
