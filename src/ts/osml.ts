@@ -5,20 +5,26 @@ module osml {
 
     export var app = angular.module('osml', []);
 
-    export function registerDirective(className: string, services = []) {
+    export function registerDirective(className:string, factory:Function = null, services = []) {
         var directive = className[0].toLowerCase() + className.slice(1);
-        services.push(() => new directives[className]());
+
+        if(factory) services.push(factory);
+        else services.push(() => new osml.directives[className]());
+
         app.directive(directive, services);
     }
 
-    export function registerController (className: string, services = []) {
-        services.push(controllers[className]);
+    export function registerController (className:string, services = []) {
+        services.push(osml.controllers[className]);
         app.controller(className, services);
     }
 
-    export function registerService (className: string, services = []) {
+    export function registerService (className:string, factory:Function = null, services = []) {
         var service = className[0].toLowerCase() + className.slice(1);
-        services.push(() => new services[className]());
+
+        if(factory) services.push(factory);
+        else services.push(() => new osml.services[className]());
+
         app.factory(service, services);
     }
 

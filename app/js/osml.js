@@ -2,10 +2,14 @@ var osml;
 (function (osml) {
     'use strict';
     osml.app = angular.module('osml', []);
-    function registerDirective(className, services) {
+    function registerDirective(className, factory, services) {
+        if (factory === void 0) { factory = null; }
         if (services === void 0) { services = []; }
         var directive = className[0].toLowerCase() + className.slice(1);
-        services.push(function () { return new osml.directives[className](); });
+        if (factory)
+            services.push(factory);
+        else
+            services.push(function () { return new osml.directives[className](); });
         osml.app.directive(directive, services);
     }
     osml.registerDirective = registerDirective;
@@ -15,29 +19,57 @@ var osml;
         osml.app.controller(className, services);
     }
     osml.registerController = registerController;
-    function registerService(className, services) {
+    function registerService(className, factory, services) {
+        if (factory === void 0) { factory = null; }
         if (services === void 0) { services = []; }
         var service = className[0].toLowerCase() + className.slice(1);
-        services.push(function () { return new services[className](); });
+        if (factory)
+            services.push(factory);
+        else
+            services.push(function () { return new osml.services[className](); });
         osml.app.factory(service, services);
     }
     osml.registerService = registerService;
 })(osml || (osml = {}));
 var osml;
 (function (osml) {
+    var services;
+    (function (services) {
+        var DataSources = (function () {
+            function DataSources() {
+                this.datasources = {
+                    test: 'test'
+                };
+            }
+            DataSources.prototype.add = function (name, datasource) {
+            };
+            DataSources.prototype.delete = function (name) {
+            };
+            DataSources.prototype.get = function (name) {
+                return this.datasources[name];
+            };
+            return DataSources;
+        })();
+        services.DataSources = DataSources;
+    })(services = osml.services || (osml.services = {}));
+})(osml || (osml = {}));
+osml.registerService('DataSources');
+var osml;
+(function (osml) {
     var controllers;
     (function (controllers) {
         var MainController = (function () {
-            function MainController($scope) {
+            function MainController($scope, ds) {
                 this.$scope = $scope;
-                $scope.message = 'Hello';
+                this.ds = ds;
+                $scope.message = 'test';
             }
             return MainController;
         })();
         controllers.MainController = MainController;
     })(controllers = osml.controllers || (osml.controllers = {}));
 })(osml || (osml = {}));
-osml.registerController('MainController', ['$scope']);
+osml.registerController('MainController', ['$scope', 'dataSources']);
 var osml;
 (function (osml) {
     var directives;
@@ -74,68 +106,73 @@ var osml;
         directives.osContainer = osContainer;
     })(directives = osml.directives || (osml.directives = {}));
 })(osml || (osml = {}));
-osml.registerDirective('osContainer', []);
+osml.registerDirective('osContainer');
 var osml;
 (function (osml) {
     var directives;
     (function (directives) {
         'use strict';
         var osInput = (function () {
-            function osInput() {
+            function osInput($timer) {
+                this.$timer = $timer;
                 this.templateUrl = 'app/components/osInput.html';
+                this.transclude = true;
                 this.scope = {
-                    placeholder: '@'
+                    name: '@',
+                    type: '@',
+                    placeholder: '@',
+                    model: '='
                 };
+                this.link = this.link.bind(this);
             }
             osInput.prototype.link = function ($scope, element, attributes) {
+                if (!attributes.type)
+                    attributes.type = 'text';
                 element.addClass('os-input');
+                this.$timer(function () {
+                    if ($scope.placeholder == undefined)
+                        $(element).children('input').removeAttr('placeholder');
+                    else
+                        $(element).children('label').addClass('active');
+                    if ($scope.model == undefined)
+                        $(element).children('input').removeAttr('ng-model');
+                    else if ($scope.model != '')
+                        $(element).children('label').addClass('active');
+                }, 0);
             };
             return osInput;
         })();
         directives.osInput = osInput;
     })(directives = osml.directives || (osml.directives = {}));
 })(osml || (osml = {}));
-osml.registerDirective('osInput', []);
+osml.registerDirective('osInput', function (timer) { return new osml.directives.osInput(timer); }, ['$timeout']);
 var osml;
 (function (osml) {
     var directives;
     (function (directives) {
         'use strict';
-        osml.app.directive('osSelect', function ($timeout) {
-            return {
-                templateUrl: 'app/components/osSelect.html',
-                scope: {
-                    options: '='
-                },
-                link: function ($scope, element, attributes) {
-                    element.addClass('os-select');
-                    $timeout(function () {
-                        $(element).children('select').material_select();
-                    }, 0);
-                }
+        var osSelect = (function () {
+            function osSelect($timer) {
+                this.$timer = $timer;
+                this.templateUrl = 'app/components/osSelect.html';
+                this.scope = {
+                    options: '=',
+                    placeholder: '@'
+                };
+                this.link = this.link.bind(this);
+            }
+            osSelect.prototype.link = function ($scope, element, attributes) {
+                element.addClass('os-select');
+                if ($scope.placeholder == undefined)
+                    $scope.placeholder = 'Choisissez une option';
+                this.$timer(function () {
+                    $(element).children('select').material_select();
+                }, 0);
             };
-        });
+            return osSelect;
+        })();
+        directives.osSelect = osSelect;
+        ;
     })(directives = osml.directives || (osml.directives = {}));
 })(osml || (osml = {}));
-var osml;
-(function (osml) {
-    var services;
-    (function (services) {
-        var DataSources = (function () {
-            function DataSources() {
-                this.datasources = {
-                    test: 'test'
-                };
-            }
-            DataSources.prototype.add = function (name, datasource) {
-            };
-            DataSources.prototype.delete = function (name) {
-            };
-            DataSources.prototype.get = function (name) {
-                return this.datasources[name];
-            };
-            return DataSources;
-        })();
-        services.DataSources = DataSources;
-    })(services = osml.services || (osml.services = {}));
-})(osml || (osml = {}));
+osml.registerDirective('osSelect', function (timer) { return new osml.directives.osSelect(timer); }, ['$timeout']);

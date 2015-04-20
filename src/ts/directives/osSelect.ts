@@ -1,20 +1,36 @@
+/// <reference path="../osml.ts"/>
+/// <reference path="../services/DataSources.ts"/>
 
 module osml.directives{
     'use strict';
 
-    osml.app.directive('osSelect', ($timeout) => {
-        return {
-            templateUrl: 'app/components/osSelect.html',
-            scope: {
-                options: '='
-            },
-            link: ($scope:ng.IScope, element:JQuery, attributes:ng.IAttributes) => {
-                element.addClass('os-select');
+    interface ISelectScope{
+        options:any;
+        placeholder:string;
+    }
 
-                $timeout(() => {
-                    $(element).children('select').material_select();
-                }, 0);
-            }
+    export class osSelect{
+        public templateUrl = 'app/components/osSelect.html';
+
+        public scope:ISelectScope = {
+            options: '=',
+            placeholder: '@'
+        };
+
+        constructor(private $timer){
+            this.link = this.link.bind(this);
         }
-    });
+
+        public link($scope:ISelectScope, element:JQuery, attributes:ng.IAttributes):void {
+            element.addClass('os-select');
+
+            if($scope.placeholder == undefined) $scope.placeholder = 'Choisissez une option';
+
+            this.$timer(() => {
+                $(element).children('select').material_select();
+            }, 0);
+        }
+    };
 }
+
+osml.registerDirective('osSelect', (timer) => new osml.directives.osSelect(timer), ['$timeout']);

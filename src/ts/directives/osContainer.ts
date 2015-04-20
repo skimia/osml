@@ -36,4 +36,4 @@ module osml.directives{
     }
 }
 
-osml.registerDirective('osContainer', []);
+osml.registerDirective('osContainer');

@@ -8,7 +8,11 @@
     <body ng-controller="MainController">
 
         <os-container direction="column">
-            <os-input placeholder=""></os-input>
+
+
+            <os-input name="form[1]" model="input">Label</os-input>
+
+
             <os-select options="[{text:'test', value:'12'}, {text:'test', value:'12'}]"></os-select>
         </os-container>
 

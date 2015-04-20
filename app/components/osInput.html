@@ -1,4 +1,2 @@
-<label for="form[1]">Input 1</label>
-<input type="text" id="form[1]"
-       ng-model="form[1]"
-       placeholder="{{placeholder}}">
+<label for="{{name}}" ng-transclude></label>
+<input type="{{type}}" id="{{name}}" placeholder="{{placeholder}}" ng-model="model">

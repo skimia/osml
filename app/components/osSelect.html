@@ -1,5 +1,5 @@
 <label>Select</label>
 <select ng-model="test">
-    <option value="" disabled selected>Choose your option</option>
+    <option value="" disabled selected>{{placeholder}}</option>
     <option ng-repeat="option in options" value="option.value">{{option.text}}</option>
 </select>

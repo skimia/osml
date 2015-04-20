@@ -22,3 +22,5 @@ module osml.services{
         }
     }
 }
+
+osml.registerService('DataSources');
