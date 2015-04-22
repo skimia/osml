@@ -1,5 +1,5 @@
-<label>Select</label>
-<select ng-model="test">
+<label for="{{name}}" ng-transclude></label>
+<select ng-model="model" id="{{name}}">
     <option value="" disabled selected>{{placeholder}}</option>
-    <option ng-repeat="option in options" value="option.value">{{option.text}}</option>
+    <option ng-repeat="option in options" value="{{option[valueVar]}}">{{option[textVar]}}</option>
 </select>

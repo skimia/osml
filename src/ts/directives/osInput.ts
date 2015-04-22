@@ -3,14 +3,14 @@
 module osml.directives{
     'use strict';
 
-    interface IInputScope extends ng.IScope{
+    interface InputScope extends ng.IScope{
         name:string;
         type:string;
         placeholder:string;
         model:any;
     }
 
-    interface IInputAttrs extends ng.IAttributes{
+    interface InputAttrs extends ng.IAttributes{
         type:string;
     }
 
@@ -30,7 +30,7 @@ module osml.directives{
             this.link = this.link.bind(this);
         }
 
-        public link($scope:IInputScope, element:JQuery, attributes:IInputAttrs):void {
+        public link($scope:InputScope, element:JQuery, attributes:InputAttrs):void {
             if(!attributes.type) attributes.type = 'text';
 
             element.addClass('os-input');

@@ -7,6 +7,7 @@ module osml.controllers {
 
         constructor (private $scope, private ds:services.DataSources) {
             $scope.message = 'test';
+            $scope.selectOptions = [{text:'test', value:'12'}, {text:'test', value:'12'}];
         }
     }
 }

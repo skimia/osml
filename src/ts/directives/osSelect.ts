@@ -1,34 +1,54 @@
 /// <reference path="../osml.ts"/>
-/// <reference path="../services/DataSources.ts"/>
+/// <reference path="../vendors/materializecss.d.ts"/>
 
 module osml.directives{
     'use strict';
 
-    interface ISelectScope{
-        options:any;
+    interface SelectScope{
+        name:string;
         placeholder:string;
+        options:any;
+        model:any;
+        optionsVars:string;
+        valueVar?:string;
+        textVar?:string;
     }
 
     export class osSelect{
         public templateUrl = 'app/components/osSelect.html';
+        public transclude:boolean = true;
 
-        public scope:ISelectScope = {
+        public scope:SelectScope = {
+            name: '@',
+            placeholder: '@',
             options: '=',
-            placeholder: '@'
+            model: '=',
+            optionsVars: '@'
         };
 
         constructor(private $timer){
             this.link = this.link.bind(this);
         }
 
-        public link($scope:ISelectScope, element:JQuery, attributes:ng.IAttributes):void {
-            element.addClass('os-select');
+        public link($scope:SelectScope, element:JQuery, attributes:ng.IAttributes):void {
+            $(element).addClass('os-select');
+            this.provideOptionsVars($scope.optionsVars, $scope);
 
-            if($scope.placeholder == undefined) $scope.placeholder = 'Choisissez une option';
+            if($scope.placeholder == undefined || $scope.placeholder == '') $scope.placeholder = 'Choisissez une option';
 
             this.$timer(() => {
                 $(element).children('select').material_select();
+
+                if($scope.model == undefined) $(element).children('input').removeAttr('ng-model');
             }, 0);
+        }
+
+        public provideOptionsVars(optionsVars:string, $scope:SelectScope):void {
+            var vars = optionsVars.split(',');
+            $scope.valueVar = vars[0];
+
+            if(vars.length > 1) $scope.textVar = vars[1];
+            else $scope.textVar = vars[0];
         }
     };
 }

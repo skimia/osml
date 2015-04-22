@@ -63,6 +63,7 @@ var osml;
                 this.$scope = $scope;
                 this.ds = ds;
                 $scope.message = 'test';
+                $scope.selectOptions = [{ text: 'test', value: '12' }, { text: 'test', value: '12' }];
             }
             return MainController;
         })();
@@ -155,19 +156,34 @@ var osml;
             function osSelect($timer) {
                 this.$timer = $timer;
                 this.templateUrl = 'app/components/osSelect.html';
+                this.transclude = true;
                 this.scope = {
+                    name: '@',
+                    placeholder: '@',
                     options: '=',
-                    placeholder: '@'
+                    model: '=',
+                    optionsVars: '@'
                 };
                 this.link = this.link.bind(this);
             }
             osSelect.prototype.link = function ($scope, element, attributes) {
-                element.addClass('os-select');
-                if ($scope.placeholder == undefined)
+                $(element).addClass('os-select');
+                this.provideOptionsVars($scope.optionsVars, $scope);
+                if ($scope.placeholder == undefined || $scope.placeholder == '')
                     $scope.placeholder = 'Choisissez une option';
                 this.$timer(function () {
                     $(element).children('select').material_select();
+                    if ($scope.model == undefined)
+                        $(element).children('input').removeAttr('ng-model');
                 }, 0);
+            };
+            osSelect.prototype.provideOptionsVars = function (optionsVars, $scope) {
+                var vars = optionsVars.split(',');
+                $scope.valueVar = vars[0];
+                if (vars.length > 1)
+                    $scope.textVar = vars[1];
+                else
+                    $scope.textVar = vars[0];
             };
             return osSelect;
         })();
