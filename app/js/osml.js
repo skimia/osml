@@ -1,3 +1,6 @@
+var config = {
+    basepath: ''
+};
 var osml;
 (function (osml) {
     'use strict';
@@ -63,7 +66,14 @@ var osml;
                 this.$scope = $scope;
                 this.ds = ds;
                 $scope.message = 'test';
-                $scope.selectOptions = [{ text: 'test', value: '12' }, { text: 'test', value: '12' }];
+                $scope.selectOptions = {
+                    1: 'zero',
+                    2: 'un'
+                };
+                $scope.input = { val: 'Test' };
+                $scope.actualize = function () {
+                    $scope.selectOptions['3'] = 'deux';
+                };
             }
             return MainController;
         })();
@@ -113,36 +123,61 @@ var osml;
     var directives;
     (function (directives) {
         'use strict';
-        var osInput = (function () {
-            function osInput($timer) {
-                this.$timer = $timer;
-                this.templateUrl = 'app/components/osInput.html';
-                this.transclude = true;
-                this.scope = {
-                    name: '@',
-                    type: '@',
-                    placeholder: '@',
-                    model: '='
-                };
+        var osDirective = (function () {
+            function osDirective($timer) {
+                this.transclude = false;
+                this.scope = {};
                 this.link = this.link.bind(this);
             }
+            osDirective.prototype.link = function ($scope, element, attributes) {
+            };
+            return osDirective;
+        })();
+        directives.osDirective = osDirective;
+    })(directives = osml.directives || (osml.directives = {}));
+})(osml || (osml = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var osml;
+(function (osml) {
+    var directives;
+    (function (directives) {
+        'use strict';
+        var osInput = (function (_super) {
+            __extends(osInput, _super);
+            function osInput($timer) {
+                _super.call(this, $timer);
+                this.$timer = $timer;
+                this.templateUrl = config.basepath + 'app/components/osInput.html';
+                this.transclude = true;
+                this.scope = true;
+            }
             osInput.prototype.link = function ($scope, element, attributes) {
-                if (!attributes.type)
-                    attributes.type = 'text';
+                this.bindAttrs(attributes, $scope);
                 element.addClass('os-input');
                 this.$timer(function () {
-                    if ($scope.placeholder == undefined)
-                        $(element).children('input').removeAttr('placeholder');
-                    else
-                        $(element).children('label').addClass('active');
-                    if ($scope.model == undefined)
-                        $(element).children('input').removeAttr('ng-model');
-                    else if ($scope.model != '')
-                        $(element).children('label').addClass('active');
                 }, 0);
             };
+            osInput.prototype.bindAttrs = function (attrs, $scope) {
+                if (attrs.name)
+                    $scope.name = attrs.name;
+                if (attrs.type)
+                    $scope.type = attrs.type;
+                else
+                    $scope.type = 'text';
+                if (attrs.placeholder)
+                    $scope.placeholder = attrs.placeholder;
+                if (attrs.attributes)
+                    $scope.attributes = attrs.attributes;
+                if (attrs.model)
+                    $scope.model = $scope[attrs.model];
+            };
             return osInput;
-        })();
+        })(directives.osDirective);
         directives.osInput = osInput;
     })(directives = osml.directives || (osml.directives = {}));
 })(osml || (osml = {}));
@@ -155,23 +190,31 @@ var osml;
         var osSelect = (function () {
             function osSelect($timer) {
                 this.$timer = $timer;
-                this.templateUrl = 'app/components/osSelect.html';
+                this.templateUrl = config.basepath + 'app/components/osSelect.html';
                 this.transclude = true;
                 this.scope = {
                     name: '@',
                     placeholder: '@',
                     options: '=',
-                    model: '=',
+                    model: '@',
                     optionsVars: '@'
                 };
                 this.link = this.link.bind(this);
             }
             osSelect.prototype.link = function ($scope, element, attributes) {
+                var _this = this;
                 $(element).addClass('os-select');
-                this.provideOptionsVars($scope.optionsVars, $scope);
+                $scope.ngModel = $scope['model'];
                 if ($scope.placeholder == undefined || $scope.placeholder == '')
                     $scope.placeholder = 'Choisissez une option';
+                $scope.$watch('model', function (value) {
+                    _this.$timer(function () {
+                        if (value)
+                            $(element).children('select').material_select();
+                    });
+                });
                 this.$timer(function () {
+                    $(element).find('select option[value="? undefined:undefined ?"]').remove();
                     $(element).children('select').material_select();
                     if ($scope.model == undefined)
                         $(element).children('input').removeAttr('ng-model');

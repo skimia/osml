@@ -15,28 +15,38 @@ module osml.directives{
     }
 
     export class osSelect{
-        public templateUrl = 'app/components/osSelect.html';
+        public templateUrl = config.basepath + 'app/components/osSelect.html';
         public transclude:boolean = true;
 
         public scope:SelectScope = {
             name: '@',
             placeholder: '@',
             options: '=',
-            model: '=',
+            model: '@',
             optionsVars: '@'
         };
 
         constructor(private $timer){
             this.link = this.link.bind(this);
+
         }
 
         public link($scope:SelectScope, element:JQuery, attributes:ng.IAttributes):void {
             $(element).addClass('os-select');
-            this.provideOptionsVars($scope.optionsVars, $scope);
+
+            $scope.ngModel = $scope['model'];
 
             if($scope.placeholder == undefined || $scope.placeholder == '') $scope.placeholder = 'Choisissez une option';
 
+            $scope.$watch('model', (value) => {
+                this.$timer(() => {
+                    if(value) $(element).children('select').material_select();
+                })
+            });
+
             this.$timer(() => {
+
+                $(element).find('select option[value="? undefined:undefined ?"]').remove();
                 $(element).children('select').material_select();
 
                 if($scope.model == undefined) $(element).children('input').removeAttr('ng-model');

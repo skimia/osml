@@ -1,5 +1,8 @@
 /// <reference path="vendors/angular.d.ts"/>
 
+var config = {
+    basepath: ''
+}
 
 module osml {
     'use strict';
