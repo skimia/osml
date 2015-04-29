@@ -1,6 +1,3 @@
-var config = {
-    basepath: ''
-};
 var osml;
 (function (osml) {
     'use strict';
@@ -124,12 +121,30 @@ var osml;
     (function (directives) {
         'use strict';
         var osDirective = (function () {
-            function osDirective($timer) {
+            function osDirective($q, $timer) {
                 this.transclude = false;
                 this.scope = {};
                 this.link = this.link.bind(this);
+                this.services = {
+                    $q: $q,
+                    $timer: $timer
+                };
             }
             osDirective.prototype.link = function ($scope, element, attributes) {
+                this.$scope = $scope;
+            };
+            osDirective.prototype.loadData = function (scopeAttr) {
+                var loading = this.services.$q.defer();
+                if (this.$scope[scopeAttr]) {
+                    loading.resolve(this.$scope[scopeAttr]);
+                }
+                else {
+                    this.$scope.$watch(scopeAttr, function (newValue, oldValue) {
+                        if (newValue !== undefined)
+                            loading.resolve(newValue);
+                    });
+                }
+                return loading.promise;
             };
             return osDirective;
         })();
@@ -149,39 +164,43 @@ var osml;
         'use strict';
         var osInput = (function (_super) {
             __extends(osInput, _super);
-            function osInput($timer) {
-                _super.call(this, $timer);
-                this.$timer = $timer;
-                this.templateUrl = config.basepath + 'app/components/osInput.html';
+            function osInput($q, $timer) {
+                _super.call(this, $q, $timer);
+                this.templateUrl = __osml_config.base_path + 'components/osInput.html';
                 this.transclude = true;
-                this.scope = true;
+                this.scope = {
+                    name: '@',
+                    type: '@',
+                    placeholder: '@',
+                    attributes: '@',
+                    model: '=ngModel'
+                };
             }
             osInput.prototype.link = function ($scope, element, attributes) {
-                this.bindAttrs(attributes, $scope);
-                element.addClass('os-input');
-                this.$timer(function () {
-                }, 0);
-            };
-            osInput.prototype.bindAttrs = function (attrs, $scope) {
-                if (attrs.name)
-                    $scope.name = attrs.name;
-                if (attrs.type)
-                    $scope.type = attrs.type;
-                else
+                _super.prototype.link.call(this, $scope, element, attributes);
+                if (!attributes.type)
                     $scope.type = 'text';
-                if (attrs.placeholder)
-                    $scope.placeholder = attrs.placeholder;
-                if (attrs.attributes)
-                    $scope.attributes = attrs.attributes;
-                if (attrs.model)
-                    $scope.model = $scope[attrs.model];
+                this.services.$q.all([
+                    this.loadData('name')
+                ]).then();
+                this.services.$timer(function () {
+                    $(element).addClass('os-input');
+                    if ($scope.placeholder == undefined)
+                        $(element).children('input').removeAttr('placeholder');
+                    else
+                        $(element).children('label').addClass('active');
+                    if ($scope.model == undefined)
+                        $(element).children('input').removeAttr('ng-model');
+                    else if ($scope.model != '')
+                        $(element).children('label').addClass('active');
+                }, 0);
             };
             return osInput;
         })(directives.osDirective);
         directives.osInput = osInput;
     })(directives = osml.directives || (osml.directives = {}));
 })(osml || (osml = {}));
-osml.registerDirective('osInput', function (timer) { return new osml.directives.osInput(timer); }, ['$timeout']);
+osml.registerDirective('osInput', function (q, timer) { return new osml.directives.osInput(q, timer); }, ['$q', '$timeout']);
 var osml;
 (function (osml) {
     var directives;
@@ -190,7 +209,7 @@ var osml;
         var osSelect = (function () {
             function osSelect($timer) {
                 this.$timer = $timer;
-                this.templateUrl = config.basepath + 'app/components/osSelect.html';
+                this.templateUrl = __osml_config.base_path + 'components/osSelect.html';
                 this.transclude = true;
                 this.scope = {
                     name: '@',

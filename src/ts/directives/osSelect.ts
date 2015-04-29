@@ -15,7 +15,7 @@ module osml.directives{
     }
 
     export class osSelect{
-        public templateUrl = config.basepath + 'app/components/osSelect.html';
+        public templateUrl = __osml_config.base_path + 'components/osSelect.html';
         public transclude:boolean = true;
 
         public scope:SelectScope = {

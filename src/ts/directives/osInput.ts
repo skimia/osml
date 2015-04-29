@@ -8,19 +8,19 @@ module osml.directives{
      * Interfaces
      */
     interface InputScope extends IDirectiveScope{
-        name:string;
-        type:string;
-        placeholder:string;
+        attributes:string;
         model:any;
-        attributes?:string;
+        name:string;
+        placeholder:string;
+        type:string;
     }
 
     interface InputAttrs extends IDirectiveAttrs{
-        name:string;
-        type:string;
         attributes:string;
-        placeholder:string;
         model:any;
+        name:string;
+        placeholder:string;
+        type:string;
     }
 
     /**
@@ -31,42 +31,49 @@ module osml.directives{
         /**
          * AngularJS Directive members
          */
-        public templateUrl:string = config.basepath + 'app/components/osInput.html';
+        public templateUrl:string = __osml_config.base_path + 'components/osInput.html';
         public transclude:boolean = true;
-        public scope = true;
+        public scope = {
+            name: '@',
+            type: '@',
+            placeholder: '@',
+            attributes: '@',
+            model: '=ngModel'
+        };
 
         /**
          * Constructor
          */
-        constructor(private $timer){
-            super($timer);
+        constructor($q, $timer){
+            super($q, $timer);
         }
 
         /**
          * Link
          */
         public link($scope:InputScope, element:JQuery, attributes:InputAttrs):void {
-            this.bindAttrs(attributes, $scope);
+            super.link($scope, element, attributes);
+            if(!attributes.type) $scope.type = 'text';
 
-            element.addClass('os-input');
+            this.services.$q.all([
+                this.loadData('name')
+            ]).then();
 
-            this.$timer(() => {
-                //if($scope.placeholder == undefined) $(element).children('input').removeAttr('placeholder');
-                //else $(element).children('label').addClass('active');
-//
-                //if($scope.model == undefined) $(element).children('input').removeAttr('ng-model');
-                //else if($scope.model != '') $(element).children('label').addClass('active');
+            this.services.$timer(() => {
+                $(element).addClass('os-input');
+
+                if($scope.placeholder == undefined)
+                    $(element).children('input').removeAttr('placeholder');
+                else
+                    $(element).children('label').addClass('active');
+
+                if($scope.model == undefined)
+                    $(element).children('input').removeAttr('ng-model');
+                else if($scope.model != '')
+                    $(element).children('label').addClass('active');
             }, 0);
-        }
-
-        public bindAttrs(attrs:InputAttrs, $scope:InputScope):void {
-            if(attrs.name) $scope.name = attrs.name;
-            if(attrs.type) $scope.type = attrs.type; else $scope.type = 'text';
-            if(attrs.placeholder) $scope.placeholder = attrs.placeholder;
-            if(attrs.attributes) $scope.attributes = attrs.attributes;
-            if(attrs.model) $scope.model = $scope[attrs.model];
         }
     }
 }
 
-osml.registerDirective('osInput', (timer) => new osml.directives.osInput(timer), ['$timeout']);
+osml.registerDirective('osInput', (q, timer) => new osml.directives.osInput(q, timer), ['$q', '$timeout']);

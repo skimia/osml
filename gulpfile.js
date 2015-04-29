@@ -18,15 +18,14 @@ var path = {
             'index.html'
         ],
         html: [
-            'app/components/*.html'
+            'components/*.html'
         ],
         css: [
             'app/css/*.css',
             'app/css/**/*.css'
         ],
         js: [
-            'app/js/*.js',
-            'app/js/**/*.js'
+            'app/js/osml.js'
         ],
         scss: [
             'src/scss/*.scss',
@@ -44,7 +43,7 @@ var path = {
     prod: {
         css:'../cms/themes/default/assets/default/css',
         js: '../cms/core/Backend/js',
-        html: '../cms/themes/default/assets/default/osml/app/components'
+        html: '../cms/themes/default/assets/default/osml/components'
     }
 }
 
@@ -65,7 +64,7 @@ gulp.task('default', function() {
     // html src files watch for copy to prod
     gulp.watch(path.files.html)
         .on('change', function (event) {
-            console.log('Change detected on "' + event.path + '"');
+            console.log('-----Change detected on "' + event.path + '"-----');
             gulp.src(event.path)
                 .pipe(gulp.dest(path.prod.html));
             console.log('Files copied');
@@ -74,13 +73,13 @@ gulp.task('default', function() {
     // ts src files watch for compile to js
     gulp.watch(path.files.ts, ['ts'])
         .on('change', function (event) {
-            console.log('Change detected on "' + event.path + '"');
+            console.log('-----Change detected on "' + event.path + '"-----');
         });
 
     // scss src files watch for compile to css
     gulp.watch(path.files.scss, ['sass'])
         .on('change', function(event){
-            console.log('Change detected on "' + event.path +'"');
+            console.log('-----Change detected on "' + event.path +'"-----');
         });
 });
 
