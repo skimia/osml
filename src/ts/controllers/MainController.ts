@@ -4,6 +4,7 @@
 module osml.controllers {
     export class MainController {
         public test:string;
+        public static $inject:string[] = [];
 
         constructor (private $scope, private ds:services.DataSources) {
             $scope.message = 'test';

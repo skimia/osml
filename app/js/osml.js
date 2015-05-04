@@ -6,17 +6,23 @@ var osml;
         if (factory === void 0) { factory = null; }
         if (services === void 0) { services = []; }
         var directive = className[0].toLowerCase() + className.slice(1);
-        if (factory)
-            services.push(factory);
-        else
-            services.push(function () { return new osml.directives[className](); });
         osml.app.directive(directive, services);
+    }
+    osml.registerDirective = registerDirective;
+    function registerDirective(directiveClass) {
+        var directive = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return directiveClass.constructor;
+        };
     }
     osml.registerDirective = registerDirective;
     function registerController(className, services) {
         if (services === void 0) { services = []; }
-        services.push(osml.controllers[className]);
-        osml.app.controller(className, services);
+        osml.controllers[className].$inject = services;
+        osml.app.controller(className, osml.controllers[className]);
     }
     osml.registerController = registerController;
     function registerService(className, factory, services) {
@@ -72,6 +78,7 @@ var osml;
                     $scope.selectOptions['3'] = 'deux';
                 };
             }
+            MainController.$inject = [];
             return MainController;
         })();
         controllers.MainController = MainController;
@@ -146,6 +153,9 @@ var osml;
                 }
                 return loading.promise;
             };
+            osDirective.prototype.register = function (name) {
+                osml.registerDirective(name);
+            };
             return osDirective;
         })();
         directives.osDirective = osDirective;
@@ -182,7 +192,8 @@ var osml;
                     $scope.type = 'text';
                 this.services.$q.all([
                     this.loadData('name')
-                ]).then();
+                ]).then(function () {
+                });
                 this.services.$timer(function () {
                     $(element).addClass('os-input');
                     if ($scope.placeholder == undefined)

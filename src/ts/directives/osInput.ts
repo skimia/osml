@@ -57,7 +57,9 @@ module osml.directives{
 
             this.services.$q.all([
                 this.loadData('name')
-            ]).then();
+            ]).then(() => {
+
+            });
 
             this.services.$timer(() => {
                 $(element).addClass('os-input');

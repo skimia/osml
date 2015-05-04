@@ -63,5 +63,11 @@ module osml.directives{
             return loading.promise;
         }
 
+        public register(name:string):void{
+            osml.registerDirective(
+                name
+            );
+        }
+
     }
 }
